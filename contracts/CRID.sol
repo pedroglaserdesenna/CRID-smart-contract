@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 contract CRID {
     address public owner;
 
-    // --- Funções Auxiliares de Assinatura (Adaptadas do ReceiverPays) ---
+    //  Funções Auxiliares de Assinatura 
     // Funcao para separar a assinatura em r, s, v
     function splitSignature(bytes memory sig)
         internal
@@ -41,7 +41,7 @@ contract CRID {
         return ecrecover(message, v, r, s);
     }
 
-    // --- Novas Estruturas e Mapeamentos para o Cenário 3 (Verificação de Documentos CRID) ---
+    // Novas Estruturas e Mapeamentos para o Cenário 3 (Verificação de Documentos CRID)
 
     struct CRIDDocumentInfo {
         uint timestamp;
@@ -52,13 +52,13 @@ contract CRID {
     // Mapeia o hash do documento CRID para suas informações
     mapping(bytes32 => CRIDDocumentInfo) public registeredCRIDDocuments;
 
-    // --- Eventos Adicionais para o Cenário 3 ---
+    //  Eventos Adicionais para o Cenário 3 
     event CRIDDocumentIssued(bytes32 indexed documentHash, address indexed studentAddress, address indexed issuer, uint timestamp);
     event CRIDDocumentVerified(bytes32 indexed documentHash, address indexed verifier, bool isAuthentic);
     event CRIDDocumentRevoked(bytes32 indexed documentHash, address indexed revoker, uint timestamp); // Se implementar revogação
 
 
-    // --- CONSTRUTOR ---
+    //  CONSTRUTOR 
     constructor() {
         owner = msg.sender;
     }
@@ -68,7 +68,7 @@ contract CRID {
         _;
     }
 
-    // --- ESTRUTURAS EXISTENTES ---
+    //  ESTRUTURAS EXISTENTES 
     struct Aluno {
         string nome;
         string curso;
@@ -104,13 +104,13 @@ contract CRID {
     // Aluno -> lista de inscrições
     mapping(address => Inscricao[]) private inscricoes;
 
-    // --- EVENTOS EXISTENTES ---
+    //  EVENTOS EXISTENTES 
     event AlunoRegistrado(address aluno, string nome, string curso);
     event MateriaCriada(string codigo, string nome, uint8 creditos, uint16 capacidade);
     event InscricaoSolicitada(address aluno, string codigoMateria);
     event InscricaoProcessada(address aluno, string codigoMateria, StatusInscricao status, string motivo);
 
-    // --- FUNÇÕES EXISTENTES ---
+    //  FUNÇÕES EXISTENTES 
 
     // Registrar aluno - só admin
     function registrarAluno(address _aluno, string memory _nome, string memory _curso) public onlyOwner {
@@ -177,7 +177,7 @@ contract CRID {
         return inscricoes[_aluno];
     }
 
-    // --- NOVAS FUNÇÕES PARA REGISTRO E VERIFICAÇÃO DE DOCUMENTOS CRID FINAIS ---
+    //  NOVAS FUNÇÕES PARA REGISTRO E VERIFICAÇÃO DE DOCUMENTOS CRID FINAIS 
 
     // Gera o hash da mensagem que será assinada off-chain pela Universidade
     // Este hash inclui o hash do documento CRID, um nonce e o endereço do contrato

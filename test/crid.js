@@ -1,9 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-// Remova qualquer linha de importação de 'anyValue' se você a adicionou anteriormente.
-// Ex: // const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/test-utils");
-
 describe("CRID Contract Document Verification", function () {
   let CRIDContractFactory;
   let cridContract;
@@ -12,8 +9,6 @@ describe("CRID Contract Document Verification", function () {
   let verificador;
   let addrs; // Outras contas
 
-  // Helper para gerar o hash da mensagem que será assinada
-  // DEVE CORRESPONDER EXATAMENTE À LÓGICA DE `getMessageHashToSign` NO SEU CONTRATO SOLIDITY
   async function generateMessageHashOffChain(
     documentHash,
     nonce,
@@ -52,7 +47,7 @@ describe("CRID Contract Document Verification", function () {
         .to.emit(cridContract, "CRIDDocumentIssued")
         .withArgs(documentHash, aluno1.address, owner.address, (timestamp) => {
           // Função de callback para validar o timestamp
-          // No Ethers v6 (usado com hardhat-toolbox ^6.0.0), BigNumbers são representados como BigInts nativos
+          // BigNumbers são representados como BigInts nativos
           return typeof timestamp === "bigint" && timestamp > 0n;
         });
 
@@ -99,12 +94,12 @@ describe("CRID Contract Document Verification", function () {
         .issueCRIDConfirmation(documentHash, aluno1.address);
 
       // 2. O administrador (Universidade) assina o hash do documento CRID off-chain
-      // Geramos o hash que o Solidity espera para assinar (documentHash + nonce + address(this))
+      // documentHash + nonce + address(this)
       const messageHashForSolidity = await cridContract.getMessageHashToSign(
         documentHash,
         nonce
       );
-      // Depois, o ethers.js `signMessage` adiciona seu próprio prefixo a isso.
+      //o ethers.js `signMessage` adiciona seu próprio prefixo a isso.
       const signature = await owner.signMessage(
         ethers.getBytes(messageHashForSolidity)
       );
@@ -148,7 +143,7 @@ describe("CRID Contract Document Verification", function () {
       const documentHash = ethers.keccak256(ethers.toUtf8Bytes(cridContent));
       const nonce = 3;
 
-      // Não registra o documento no contrato!
+      // Não registra o documento no contrato
       const messageHashForSolidity = await cridContract.getMessageHashToSign(
         documentHash,
         nonce
@@ -281,11 +276,8 @@ describe("CRID Contract Document Verification", function () {
     });
   });
 
-  // Você pode manter seus testes existentes para as funcionalidades de `registrarAluno`,
-  // `criarMateria`, `solicitarInscricao`, `processarInscricao`, `getInscricoes` aqui.
   describe("Existing CRID functionalities", function () {
     it("Should register a student correctly", async function () {
-      // Already registered in beforeEach, verify its state
       const registeredStudent = await cridContract.alunos(aluno1.address);
       expect(registeredStudent.nome).to.equal("Marie Sklodowska-Curie");
       expect(registeredStudent.curso).to.equal("Fisica");
