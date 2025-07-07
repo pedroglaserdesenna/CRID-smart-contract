@@ -1,0 +1,32 @@
+name: Hardhat CI/CD
+
+on:
+  push:
+    branches:
+      - main # Dispara o workflow quando houver um push para a branch 'main'
+  pull_request:
+    branches:
+      - main # Dispara o workflow quando houver um pull request para a branch 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4 # Clona o repositório
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4 # Configura o Node.js
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Compile Smart Contracts
+        run: npx hardhat compile
+
+      - name: Run Hardhat Tests
+        run: npx hardhat test
